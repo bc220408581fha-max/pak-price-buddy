@@ -6,7 +6,11 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { categorizeProduct } from "@/lib/format";
+
+const CATEGORIES = ["Grocery", "Dairy", "Produce", "Household"] as const;
+type Category = (typeof CATEGORIES)[number];
 
 export const Route = createFileRoute("/_authenticated/products/new")({
   head: () => ({
@@ -23,10 +27,15 @@ export const Route = createFileRoute("/_authenticated/products/new")({
 function NewProduct() {
   const navigate = useNavigate();
   const [name, setName] = useState("");
+  const [category, setCategory] = useState<Category | "">("");
   const [store, setStore] = useState("");
   const [city, setCity] = useState("");
   const [price, setPrice] = useState("");
   const [loading, setLoading] = useState(false);
+
+  // Auto-suggest a category as the user types the name, unless they've picked one.
+  const suggested = name.trim() ? (categorizeProduct(name.trim()) as Category) : "";
+  const effectiveCategory: Category = (category || suggested || "Grocery") as Category;
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -43,7 +52,7 @@ function NewProduct() {
       if (!productId) {
         const { data: created, error } = await supabase
           .from("products")
-          .insert({ name: trimmed, category: categorizeProduct(trimmed) })
+          .insert({ name: trimmed, category: effectiveCategory })
           .select("id")
           .single();
         if (error) throw error;
@@ -60,7 +69,7 @@ function NewProduct() {
       if (pErr) throw pErr;
 
       toast.success("Price reported. Thank you!");
-      navigate({ to: "/products/$id", params: { id: productId } });
+      navigate({ to: "/products" });
     } catch (err: any) {
       toast.error(err.message ?? "Failed to submit");
     } finally {
@@ -73,13 +82,26 @@ function NewProduct() {
       <Card>
         <CardHeader>
           <CardTitle>Report a new product</CardTitle>
-          <CardDescription>We'll auto-categorize it based on the name.</CardDescription>
+          <CardDescription>Add a product and the price you saw in-store.</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={submit} className="space-y-3">
             <div>
               <Label htmlFor="n">Product name</Label>
               <Input id="n" required value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Olpers Milk 1L" />
+            </div>
+            <div>
+              <Label htmlFor="cat">Category</Label>
+              <Select value={category} onValueChange={(v) => setCategory(v as Category)}>
+                <SelectTrigger id="cat">
+                  <SelectValue placeholder={suggested ? `Auto: ${suggested}` : "Select a category"} />
+                </SelectTrigger>
+                <SelectContent>
+                  {CATEGORIES.map((c) => (
+                    <SelectItem key={c} value={c}>{c}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
