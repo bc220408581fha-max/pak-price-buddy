@@ -8,7 +8,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Sprout } from "lucide-react";
+import { Sprout, Play } from "lucide-react";
+import { useServerFn } from "@tanstack/react-start";
+import { startDemoSession } from "@/lib/demo-auth.functions";
 
 export const Route = createFileRoute("/auth")({
   ssr: false,
@@ -29,6 +31,7 @@ export const Route = createFileRoute("/auth")({
 
 function AuthPage() {
   const navigate = useNavigate();
+  const demoSession = useServerFn(startDemoSession);
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -73,6 +76,26 @@ function AuthPage() {
     if (result.redirected) return;
     navigate({ to: "/dashboard" });
   }
+
+  async function tryDemo() {
+    setLoading(true);
+    try {
+      const { tokenHash } = await demoSession();
+      const { error } = await supabase.auth.verifyOtp({
+        type: "email",
+        token_hash: tokenHash,
+      });
+      if (error) throw error;
+      toast.success("Signed in with the demo account");
+      navigate({ to: "/dashboard" });
+    } catch {
+      toast.error("Could not start the demo session. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-secondary/40 to-background px-4 py-10">
@@ -152,6 +175,20 @@ function AuthPage() {
               </svg>
               Continue with Google
             </Button>
+
+            <Button
+              variant="secondary"
+              className="w-full mt-3"
+              onClick={tryDemo}
+              disabled={loading}
+              type="button"
+            >
+              <Play className="h-4 w-4 mr-2" />
+              Try Demo Account
+            </Button>
+            <p className="mt-2 text-center text-xs text-muted-foreground">
+              Explore the app instantly with demo@pricetracker.com — no signup needed.
+            </p>
           </CardContent>
         </Card>
       </div>
