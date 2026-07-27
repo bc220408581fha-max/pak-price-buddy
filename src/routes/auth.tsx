@@ -8,7 +8,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Sprout } from "lucide-react";
+import { Sprout, Play } from "lucide-react";
+import { useServerFn } from "@tanstack/react-start";
+import { startDemoSession } from "@/lib/demo-auth.functions";
 
 export const Route = createFileRoute("/auth")({
   ssr: false,
