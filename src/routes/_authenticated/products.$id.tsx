@@ -10,6 +10,8 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { formatPKR, daysAgo } from "@/lib/format";
 import { CheckCircle2, ArrowLeft, Plus } from "lucide-react";
+import { confirmPriceStillAccurate as confirmPrice } from "@/lib/price-reports.functions";
+
 
 export const Route = createFileRoute("/_authenticated/products/$id")({
   head: () => ({
