@@ -77,6 +77,26 @@ function AuthPage() {
     navigate({ to: "/dashboard" });
   }
 
+  async function tryDemo() {
+    setLoading(true);
+    try {
+      const tokens = await demoSession();
+      const { error } = await supabase.auth.setSession({
+        access_token: tokens.access_token,
+        refresh_token: tokens.refresh_token,
+      });
+      if (error) throw error;
+      toast.success("Signed in with the demo account");
+      navigate({ to: "/dashboard" });
+    } catch {
+      toast.error("Could not start the demo session. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-secondary/40 to-background px-4 py-10">
       <div className="w-full max-w-md">
