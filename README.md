@@ -166,8 +166,6 @@ Respond in simple, friendly English, use PKR for currency, and be concise and pr
 ---
 
 ## 📸 Screenshots
-## 📸 Screenshots
-
 ### Dashboard
 ![Dashboard](dashboard.png)
 
