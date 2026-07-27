@@ -1,0 +1,157 @@
+{
+  "version": 1,
+  "sdk_version": "0.24.0",
+  "path": "/mcp",
+  "auth": {
+    "type": "oauth",
+    "issuer": "https://vhpttkaymdessfiesfla.supabase.co/auth/v1",
+    "accepted_audiences": [
+      "authenticated"
+    ]
+  },
+  "mcp": {
+    "server": {
+      "name": "ai-price-tracker-mcp",
+      "version": "0.1.0",
+      "title": "AI Price Tracker"
+    },
+    "tools": [
+      {
+        "name": "search_products",
+        "title": "Search products",
+        "description": "Search tracked grocery products by name or category and see the latest reported price for each.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "description": "Text to match against the product name. Use an empty string to list everything."
+            },
+            "category": {
+              "description": "Optional category filter: Grocery, Dairy, Produce or Household.",
+              "type": "string"
+            }
+          },
+          "required": [
+            "query"
+          ]
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_price_reports",
+        "title": "List price reports",
+        "description": "List crowdsourced price reports for one product, newest first, including store, city, price in PKR and date.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "product_id": {
+              "type": "string",
+              "description": "The product id returned by search_products."
+            }
+          },
+          "required": [
+            "product_id"
+          ]
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "report_price",
+        "title": "Report a price",
+        "description": "Submit a price you saw in a store for a product. Creates the product (auto-categorized) if it does not exist yet.",
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": false,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "product_name": {
+              "type": "string",
+              "description": "Product name, e.g. 'Basmati Rice 1kg'."
+            },
+            "store_name": {
+              "type": "string",
+              "description": "Store where the price was seen, e.g. 'Al-Fatah'."
+            },
+            "city": {
+              "type": "string",
+              "description": "City, e.g. 'Lahore'."
+            },
+            "price": {
+              "type": "number",
+              "description": "Price in PKR."
+            }
+          },
+          "required": [
+            "product_name",
+            "store_name",
+            "city",
+            "price"
+          ]
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_shopping_list",
+        "title": "Get shopping list and budget",
+        "description": "Get the signed-in user's shopping list items with quantities, the estimated total in PKR, and their monthly budget.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "add_to_shopping_list",
+        "title": "Add item to shopping list",
+        "description": "Add a tracked product to the signed-in user's shopping list with a quantity. Creates a list if none exists.",
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": false,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "product_id": {
+              "type": "string",
+              "description": "Product id from search_products."
+            },
+            "quantity": {
+              "type": "number",
+              "description": "How many units to add. Defaults to 1 if omitted upstream."
+            }
+          },
+          "required": [
+            "product_id",
+            "quantity"
+          ]
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}
