@@ -22,20 +22,35 @@ export const Route = createFileRoute("/auth")({
       { property: "og:description", content: "Sign in or create an account to track grocery prices and plan your budget." },
     ],
   }),
-  beforeLoad: async () => {
+  validateSearch: (s: Record<string, unknown>) => ({
+    next: typeof s.next === "string" && s.next.startsWith("/") && !s.next.startsWith("//") ? s.next : undefined,
+  }),
+  beforeLoad: async ({ search }) => {
     const { data } = await supabase.auth.getSession();
-    if (data.session) throw redirect({ to: "/dashboard" });
+    if (data.session) {
+      if (search.next) throw redirect({ href: search.next });
+      throw redirect({ to: "/dashboard" });
+    }
   },
   component: AuthPage,
 });
 
 function AuthPage() {
   const navigate = useNavigate();
+  const { next } = Route.useSearch();
   const demoSession = useServerFn(startDemoSession);
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
+
+  function goNext() {
+    if (next) {
+      window.location.href = next;
+      return;
+    }
+    navigate({ to: "/dashboard" });
+  }
 
   async function signIn(e: React.FormEvent) {
     e.preventDefault();
@@ -43,7 +58,7 @@ function AuthPage() {
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     setLoading(false);
     if (error) return toast.error(error.message);
-    navigate({ to: "/dashboard" });
+    goNext();
   }
 
   async function signUp(e: React.FormEvent) {
@@ -54,19 +69,19 @@ function AuthPage() {
       password,
       options: {
         data: { name },
-        emailRedirectTo: window.location.origin,
+        emailRedirectTo: next ? window.location.origin + next : window.location.origin,
       },
     });
     setLoading(false);
     if (error) return toast.error(error.message);
     toast.success("Account created!");
-    navigate({ to: "/dashboard" });
+    goNext();
   }
 
   async function google() {
     setLoading(true);
     const result = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: window.location.origin,
+      redirect_uri: next ? window.location.origin + next : window.location.origin,
     });
     if (result.error) {
       setLoading(false);
@@ -74,7 +89,7 @@ function AuthPage() {
       return;
     }
     if (result.redirected) return;
-    navigate({ to: "/dashboard" });
+    goNext();
   }
 
   async function tryDemo() {
@@ -87,7 +102,7 @@ function AuthPage() {
       });
       if (error) throw error;
       toast.success("Signed in with the demo account");
-      navigate({ to: "/dashboard" });
+      goNext();
     } catch {
       toast.error("Could not start the demo session. Please try again.");
     } finally {
