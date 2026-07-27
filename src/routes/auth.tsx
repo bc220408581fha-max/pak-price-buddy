@@ -175,6 +175,20 @@ function AuthPage() {
               </svg>
               Continue with Google
             </Button>
+
+            <Button
+              variant="secondary"
+              className="w-full mt-3"
+              onClick={tryDemo}
+              disabled={loading}
+              type="button"
+            >
+              <Play className="h-4 w-4 mr-2" />
+              Try Demo Account
+            </Button>
+            <p className="mt-2 text-center text-xs text-muted-foreground">
+              Explore the app instantly with demo@pricetracker.com — no signup needed.
+            </p>
           </CardContent>
         </Card>
       </div>
