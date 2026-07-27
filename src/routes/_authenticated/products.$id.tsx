@@ -76,11 +76,15 @@ function ProductDetail() {
   }
 
   async function confirmStill(reportId: string) {
-    const { error } = await supabase.rpc("confirm_price_still_accurate", { _report_id: reportId });
-    if (error) return toast.error(error.message);
-    toast.success("Thanks for confirming!");
-    qc.invalidateQueries({ queryKey: ["reports", id] });
+    try {
+      await confirmPrice({ data: { reportId } });
+      toast.success("Thanks for confirming!");
+      qc.invalidateQueries({ queryKey: ["reports", id] });
+    } catch (err: any) {
+      toast.error(err?.message ?? "Could not confirm this price right now.");
+    }
   }
+
 
   async function addToList(productId: string) {
     const { data: u } = await supabase.auth.getUser();
