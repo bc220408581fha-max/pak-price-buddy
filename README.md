@@ -14,7 +14,7 @@ Users can also:
 
 ---
 
-## 🎯 Problem It Solves
+## Problem It Solves
 
 * No reliable, real-time grocery price comparison in Pakistan
 * Prices vary across cities and stores
@@ -58,8 +58,9 @@ Or sign up with your own email / Google account.
 * Email + Password login
 * Google Sign-in (Supabase Auth)
 * Secure logout
+* demo user
 
-### 🛍️ Product Catalog
+### Product Catalog
 
 * Categories: Grocery, Dairy, Produce, Household
 * Auto-categorization for new items
