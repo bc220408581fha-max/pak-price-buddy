@@ -1,6 +1,6 @@
 import { defineTool } from "@lovable.dev/mcp-js";
 import { z } from "zod";
-import { categorize } from "@/lib/format";
+import { categorizeProduct } from "@/lib/format";
 import { errorResult, supabaseForUser, textResult } from "../supabase";
 
 export default defineTool({
@@ -24,7 +24,7 @@ export default defineTool({
     if (!productId) {
       const { data: created, error: createError } = await supabase
         .from("products")
-        .insert({ name, category: categorize(name) })
+        .insert({ name, category: categorizeProduct(name) })
         .select("id")
         .single();
       if (createError) return errorResult(createError.message);
