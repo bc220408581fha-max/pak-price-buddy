@@ -80,10 +80,10 @@ function AuthPage() {
   async function tryDemo() {
     setLoading(true);
     try {
-      const tokens = await demoSession();
-      const { error } = await supabase.auth.setSession({
-        access_token: tokens.access_token,
-        refresh_token: tokens.refresh_token,
+      const { tokenHash } = await demoSession();
+      const { error } = await supabase.auth.verifyOtp({
+        type: "email",
+        token_hash: tokenHash,
       });
       if (error) throw error;
       toast.success("Signed in with the demo account");
