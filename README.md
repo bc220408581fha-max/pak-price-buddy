@@ -167,10 +167,10 @@ Respond in simple, friendly English, use PKR for currency, and be concise and pr
 
 ## 📸 Screenshots
 
-* Dashboard
-* Products & Price Reports
-* AI Assistant
-* Login / Signup
+* Dashboard.png
+* Products & Price Reports.png
+* AI Assistant.png
+* Login / Signup.png
 
 *(Add images here later for better presentation)*
 
