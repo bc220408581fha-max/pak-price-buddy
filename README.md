@@ -14,6 +14,12 @@ AI Price Tracker solves this by letting users **report prices they see in stores
 
 Anyone can open this link, sign up, and start using the app immediately — no invite or approval needed.
 
+**Demo Account (for quick testing):**
+- Email: `demo@pricetracker.com`
+- Password: `PriceTracker@2026`
+
+Or feel free to sign up with your own email/password, or continue with Google — signup is instant with no email verification required.
+
 ## c. Features
 
 - **Secure signup/login** — email + password authentication, plus "Continue with Google" (Supabase Auth), with sign out available from the sidebar
@@ -38,7 +44,6 @@ Anyone can open this link, sign up, and start using the app immediately — no i
 - Warn the user if their list is likely to go over budget, and suggest ways to cut cost
 - Answer natural questions like *"Where can I find the cheapest rice?"* or *"Can I afford chicken and rice this week?"*
 
-**System prompt used:**
 **System prompt used:**
 
 You are a budget-conscious shopping assistant for users in Pakistan. You receive the user's
